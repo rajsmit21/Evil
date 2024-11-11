@@ -23,6 +23,18 @@
             overflow: hidden;
         }
 
+        /* Styling for your name */
+        #header {
+            position: fixed;
+            top: 10px;
+            font-size: 24px;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+            color: #2a7fff;
+            z-index: 10;
+        }
+
         #chat-container {
             width: 100%;
             height: calc(100vh - 70px);
@@ -33,6 +45,7 @@
             display: flex;
             flex-direction: column;
             padding: 20px;
+            margin-top: 40px; /* Space for the header */
             overflow: hidden;
             position: relative;
         }
@@ -122,6 +135,9 @@
     </style>
 </head>
 <body>
+    <!-- Header with your name -->
+    <div id="header">Raj Evil Gpt</div>
+
     <div id="chat-container">
         <div id="messages"></div>
     </div>
