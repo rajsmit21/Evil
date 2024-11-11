@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Styled GPT Chat</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #181818;
+            color: #fff;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
+            overflow: hidden;
+        }
+
+        #chat-container {
+            width: 100%;
+            height: calc(100vh - 70px);
+            max-width: 600px;
+            background: #1c1c1c;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        #messages {
+            flex: 1;
+            overflow-y: auto;
+            padding-right: 10px;
+            padding-bottom: 20px;
+        }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            background: #333;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            opacity: 0;
+            animation: fadeIn 0.3s ease-out forwards;
+        }
+
+        .user {
+            background-color: #2a7fff;
+            align-self: flex-end;
+        }
+
+        .bot {
+            background-color: #444;
+            align-self: flex-start;
+        }
+
+        #input-container {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 600px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 10;
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            background: #333;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            font-size: 16px;
+            outline: none;
+            animation: glowing 1.5s infinite ease-in-out alternate;
+        }
+
+        input[type="text"]:focus {
+            background-color: #444;
+        }
+
+        button {
+            padding: 10px 20px;
+            background: #2a7fff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        button:hover {
+            background-color: #1d5fcd;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        @keyframes glowing {
+            0% { box-shadow: 0 0 5px #2a7fff, 0 0 10px #2a7fff, 0 0 15px #2a7fff; }
+            50% { box-shadow: 0 0 5px #2a7fff, 0 0 20px #2a7fff, 0 0 30px #2a7fff; }
+            100% { box-shadow: 0 0 5px #2a7fff, 0 0 10px #2a7fff, 0 0 15px #2a7fff; }
+        }
+    </style>
+</head>
+<body>
+    <div id="chat-container">
+        <div id="messages"></div>
+    </div>
+
+    <div id="input-container">
+        <input type="text" id="question" placeholder="Type your question here" />
+        <button onclick="getResponse()">Submit</button>
+    </div>
+
+    <script>
+        const url = "https://white-evilgpt.ashlynn.workers.dev/";
+
+        async function getResponse() {
+            const question = document.getElementById("question").value;
+            const messages = document.getElementById("messages");
+
+            // Display user's message
+            const userMessage = document.createElement("div");
+            userMessage.className = "message user";
+            userMessage.textContent = question;
+            messages.appendChild(userMessage);
+
+            document.getElementById("question").value = ""; // Clear input field
+            messages.scrollTop = messages.scrollHeight; // Scroll to bottom
+
+            // Display bot's loading message
+            const botMessage = document.createElement("div");
+            botMessage.className = "message bot";
+            botMessage.textContent = "Loading...";
+            messages.appendChild(botMessage);
+
+            try {
+                const response = await fetch(`${url}?question=${encodeURIComponent(question)}&state=evilgpt`);
+                const data = await response.json();
+                
+                // Display bot's response
+                botMessage.textContent = response.ok ? data.message : "Error fetching response";
+            } catch (error) {
+                botMessage.textContent = "Could not connect to the API.";
+            }
+
+            messages.scrollTop = messages.scrollHeight; // Scroll to the latest message
+        }
+    </script>
+</body>
+</html>
